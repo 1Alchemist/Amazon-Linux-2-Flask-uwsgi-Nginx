@@ -4,10 +4,15 @@ Create docker image using AWS Linux 2 base image to run Python 3.8, Flask REST A
 This sample is to create your own Docker image that will be based on Amazon linux 2 base image and will run Python 3.8 based Flask Web application using uwsgi and nginx in single container.
 Components Involved are as follows:
     Amazon Linus 2 - Base image
+    
     Nginx - Web server, reverse proxy to uwsgi 
+    
     uwsgi - App Server - to host Flask application
-    Flask - Popular frame work to create web application/ REST API
+    
+    Flask - Popular framework to create web application/ REST API
+    
     Python 3.8 - Language to write Web Application/ REST API.
+    
 I won't be going in to details about uwsgi configurations as a part of this post. The objective is to run all in one container on Amazon linux 2.
 # General Instructions
 This repository has Dockerfile, script to do the initial setup and sample application.
