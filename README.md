@@ -18,15 +18,22 @@ I won't be going in to details about uwsgi configurations as a part of this post
 This repository has Dockerfile, script to do the initial setup and sample application.
 Repository has -
   script - This folder has setup.sh script which does all the installation work.
-  src - This folder has sample python flask application source code, templates folder to store html templates for applicaiton, system folder to store uwsgi configuration, nginx    configuration and ini files required to run application.
+  
+  src - This folder has sample python flask application source code
+  
+  templates - folder to store html templates for applicaiton
+  
+  system - folder to store uwsgi configuration, nginx configuration and ini files required to run application.
+  
   Dockerfile - Docker file to create our image from Amazon linux 2 base image and make it ready to host our application.
+  
 We will see significance of each component in following sections.
 # Dockerfile
 Use Amazon linux 2 as a base image
 
     FROM amazonlinux
 
-Copy script folder to container. This folder has setup.sh file which will do all the software installation work and setup work. There are lot of steps in order to get it ready to host the web application that is the reason I kept it in a separate file. It is also easy to run the setup file manually inside container using Docker desktop. This helps us to troubleshoot any issue.
+Copy script folder to container. This folder has setup.sh file which will do all the software installation work and setup work. There are lot of steps in order to get it ready to host the web application that is the reason I kept it in a separate file. It is also easy to run the setup file manually inside container using Docker desktop. This helps us troubleshoot any issue.
 
     COPY script /script
 
@@ -86,17 +93,19 @@ Modify supervisord.conf file to make it a foreground process so that container w
     sed -i 's/nodaemon=false/nodaemon=true/g' /etc/supervisord.conf
     
 Add include statement to supervisord.conf file to include ini files which will have configuration for programs to run.
+
     sed -i -e '$a[include]' /etc/supervisord.conf
     sed -i -e '$afiles = supervisord.d/*.ini' /etc/supervisord.conf
     
 Make directory called supervisord.d which will have links to external ini files.
+
     mkdir /etc/supervisord.d
 
 Install requirements as per the requirements.txt in order to run our application. This will install Flask, uwsgi and other components. please refer the file for details.
 
     pip3.8 install -r /var/www/requirements.txt
 
-We are keeping nginx configuration in external file and that file will be include in main nginx.conf file. This approach will make our nginx configuration easy to maintain.
+We are keeping nginx configuration in external file and that file will be included in main nginx.conf file. This approach will make our nginx configuration easy to maintain.
   
     ln -s /var/www/system/hello_flask_nginx.conf /etc/nginx/conf.d/hello_flask_nginx.conf
 
@@ -105,11 +114,11 @@ Create link to program file that will be include in supervisord.conf file. This 
     ln -s /var/www/system/programs.ini /etc/supervisord.d/programs.ini
 
 # src/system/hello_flask_nginx.conf
-    This is the nginx configuration file that will be included in the main nginx.conf. This filw will have nginx settings required to run our application.
+This is the nginx configuration file that will be included in the main nginx.conf. This filw will have nginx settings required to run our application.
 # src/system/hello_flask_uwsgi.ini
-    This file has configurations required for uwsgi app server. This file is reffered in programs.ini. And used while launching uwsgi process.
+This file has configurations required for uwsgi app server. This file is reffered in programs.ini. And used while launching uwsgi process.
 # src/system/programs.ini
-    This file is included in supervisord.conf file. It has information about which programs to launch using supervisord. This launches uwsgi and nginx.
+This file is included in supervisord.conf file. It has information about which programs to launch using supervisord. This launches uwsgi and nginx.
  
 # Building Docker Image
 Copy the repository in local folder. Go to folder and run following command. No need to mention docker file name as it is in same folder.
